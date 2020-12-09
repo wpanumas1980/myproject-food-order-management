@@ -1,3 +1,9 @@
+.font-mali{
+  font-family: 'Mali', cursive;
+}
+.font-roboto{
+  font-family: 'Roboto', sans-serif;
+}
 .App {
   text-align: center;
 }
