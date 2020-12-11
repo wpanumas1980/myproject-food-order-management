@@ -1,11 +1,13 @@
 import './App.css';
 import NavBar from './components/NavBar/NavBar';
+import ProducDetail from './containers/page/ProductDetail/ProductDetail';
 
 function App() {
+
   return (
-    <div className="App">
-      <NavBar/>
-       <h1 className="font-roboto">Food Order Management</h1>
+    <div >
+      <NavBar />
+      <ProducDetail/>
     </div>
   );
 }
