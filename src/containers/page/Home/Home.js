@@ -1,12 +1,12 @@
-import { makeStyles } from '@material-ui/core';
-import FoodRow from '../../../components/FoodRow/FoodRow';
-import ProductCarousel from '../../../components/ProductCarousel/ProductCarousel';
-
-const useStyles = makeStyles((theme) => ({
+import React, { useContext } from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
+import ShowFood from '../../../components/ShowFood/ShowFood';
+import { AuthContext } from "../../../auth/Auth";
+// import Navbar from '../../../components/NavBar/NavBar';
+const useStyles = makeStyles(() => ({
     mainBody: {
-        width: "80%",
         margin: "0 auto",
-        marginTop:10,
+        marginTop: 10,
         textAlign: 'center',
         background: '#f5f5f5'
     }
@@ -14,10 +14,14 @@ const useStyles = makeStyles((theme) => ({
 
 function Home() {
     const classes = useStyles();
+    const { currentUser } = useContext(AuthContext);
+    // console.log(currentUser.email);
     return (
         <div className={classes.mainBody}>
-            <ProductCarousel />     
-            <FoodRow />
+            <Typography variant="h3" gutterBottom>
+                เมนู
+      </Typography>
+            <ShowFood />
         </div>
     )
 }

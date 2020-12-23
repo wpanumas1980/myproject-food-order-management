@@ -1,14 +1,20 @@
+import React from "react";
+import { BrowserRouter} from 'react-router-dom';
 import './App.css';
-import NavBar from './components/NavBar/NavBar';
-import ProducDetail from './containers/page/ProductDetail/ProductDetail';
+import { AuthProvider } from './auth/Auth';
+import Navbar from "./components/NavBar/NavBar";
+import PrivateRoutes from "./containers/PrivateRoutes/PrivateRoutes";
 
 function App() {
-
-  return (
-    <div >
-      <NavBar />
-      <ProducDetail/>
-    </div>
+   return (
+    <>
+      <BrowserRouter>
+        <AuthProvider>
+          <Navbar/>
+          <PrivateRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </>
   );
 }
 

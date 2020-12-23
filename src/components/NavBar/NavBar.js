@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import { AccountCircle } from '@material-ui/icons';
 import { ButtonGroup } from '@material-ui/core';
+import { AuthContext } from "../../auth/Auth";
+import { firestore, auth } from '../../config/firebase';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -35,16 +36,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar() {
+    const { currentUser, setCurrentUser } = useContext(AuthContext);
+    const [menus, setMenu] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const classes = useStyles();
-    const menuId = 'primary-search-account-menu';
     const open = Boolean(anchorEl);
+
+    const ref = firestore.collection('menu');
+    const history = useHistory();
+
     const handleProfileMenuOpen = (event) => {
-        console.log(event.currentTarget);
+        setAnchorEl(null);
+        history.push('/profile')
     };
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const handleLogin = (event) => {
+        // setAnchorEl(event.currentTarget);
+        setAnchorEl(null);
+        history.push('/login');
     };
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -52,6 +62,31 @@ export default function NavBar() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+
+    const logOut = () => {
+        auth.signOut();
+        setAnchorEl(null);
+        setCurrentUser(null);
+        alert('Log out...')
+    };
+
+    //ONE TIME GET FUNCTION
+    const getMenu = () => {
+        setLoading(true);
+        ref
+            .get()
+            .then((item) => {
+                const items = item.docs.map((doc) => doc.data());
+                setMenu(items);
+                setLoading(false);
+            });
+    }
+    useEffect(() => {
+        getMenu();
+        setLoading(false);
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <div className={classes.root} >
@@ -93,16 +128,19 @@ export default function NavBar() {
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                        <MenuItem onClick={handleClose}>Login</MenuItem>
+                        <MenuItem onClick={handleProfileMenuOpen}>Profile</MenuItem>
+                        {currentUser ?
+                            <MenuItem onClick={logOut}>Logout</MenuItem>
+                            :
+                            <MenuItem onClick={handleLogin}>Login</MenuItem>
+                        }
+
                     </Menu>
                 </Toolbar>
                 <Toolbar className={classes.bottomMenu}>
                     <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
-                        <Button>One</Button>
-                        <Button>Two</Button>
-                        <Button>Three</Button>
+                        <Button id='0'>Home</Button>
+                        {menus.map((menu, idx) => <Button id={menu.id}>{menu.name}</Button>)}
                     </ButtonGroup>
                 </Toolbar>
             </AppBar>
